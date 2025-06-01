@@ -4,38 +4,44 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t sit753-app .'
+                bat 'docker build -t sit753-app .'
             }
         }
+
         stage('Test') {
             steps {
-                sh 'pytest || true'
+                bat 'pytest || exit 0'
             }
         }
+
         stage('Code Quality') {
             steps {
-                sh 'pip install pylint && pylint app.py || true'
+                bat 'pip install pylint && pylint app.py || exit 0'
             }
         }
+
         stage('Security') {
             steps {
-                sh 'pip install bandit && bandit -r . || true'
+                bat 'pip install bandit && bandit -r . || exit 0'
             }
         }
+
         stage('Deploy') {
             steps {
-                sh 'docker run -d -p 5000:5000 --name flaskapp sit753-app'
+                bat 'docker run -d -p 5000:5000 --name flaskapp sit753-app'
             }
         }
+
         stage('Release') {
             steps {
-                sh 'git tag v1.0.${BUILD_NUMBER}'
-                sh 'git push origin v1.0.${BUILD_NUMBER}'
+                bat 'git tag v1.0.%BUILD_NUMBER%'
+                bat 'git push origin v1.0.%BUILD_NUMBER%'
             }
         }
+
         stage('Monitoring') {
             steps {
-                sh 'curl http://localhost:5000/health || true'
+                bat 'curl http://localhost:5000/health || exit 0'
             }
         }
     }

@@ -10,19 +10,19 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'pytest || true'
+                sh 'docker run --rm sit753-app pytest || true'
             }
         }
 
         stage('Code Quality') {
             steps {
-                sh 'pip install pylint && pylint app.py || true'
+                sh 'docker run --rm sit753-app pylint app.py || true'
             }
         }
 
         stage('Security') {
             steps {
-                sh 'pip install bandit && bandit -r . || true'
+                sh 'docker run --rm sit753-app bandit -r . || true'
             }
         }
 
@@ -35,8 +35,9 @@ pipeline {
 
         stage('Release') {
             steps {
-                sh 'git tag v1.0.${BUILD_NUMBER}'
-                sh 'git push origin v1.0.${BUILD_NUMBER}'
+                // COMMENT THIS OUT unless you want to set up GitHub credentials
+                // sh 'git tag v1.0.${BUILD_NUMBER}'
+                // sh 'git push origin v1.0.${BUILD_NUMBER}'
             }
         }
 

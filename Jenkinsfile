@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t sit753-app .'
+                sh 'docker build -t sit753-app .'    
             }
         }
 
@@ -35,7 +35,10 @@ pipeline {
 
         stage('Release') {
             steps {
-                // COMMENT THIS OUT unless you want to set up GitHub credentials
+                echo 'Skipping Git tag and push unless GitHub credentials are configured.'
+                // If Git credentials are set up:
+                // sh 'git config user.name "jenkins"'
+                // sh 'git config user.email "jenkins@example.com"'
                 // sh 'git tag v1.0.${BUILD_NUMBER}'
                 // sh 'git push origin v1.0.${BUILD_NUMBER}'
             }

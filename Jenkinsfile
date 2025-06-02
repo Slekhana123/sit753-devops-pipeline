@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'docker build -t sit753-app .'    
+                sh 'docker build -t sit753-app .' 
             }
         }
 
@@ -16,13 +16,13 @@ pipeline {
 
         stage('Code Quality') {
             steps {
-                sh 'docker run --rm sit753-app pylint app.py || true'
+                sh 'docker run --rm sit753-app /bin/sh -c "pip install pylint && pylint app.py" || true'
             }
         }
 
         stage('Security') {
             steps {
-                sh 'docker run --rm sit753-app bandit -r . || true'
+                sh 'docker run --rm sit753-app /bin/sh -c "pip install bandit && bandit -r ." || true'
             }
         }
 
@@ -36,17 +36,12 @@ pipeline {
         stage('Release') {
             steps {
                 echo 'Skipping Git tag and push unless GitHub credentials are configured.'
-                // If Git credentials are set up:
-                // sh 'git config user.name "jenkins"'
-                // sh 'git config user.email "jenkins@example.com"'
-                // sh 'git tag v1.0.${BUILD_NUMBER}'
-                // sh 'git push origin v1.0.${BUILD_NUMBER}'
             }
         }
 
         stage('Monitoring') {
             steps {
-                sh 'curl http://localhost:5000/health || true'
+                sh 'curl http://host.docker.internal:5000/health || true'
             }
         }
     }
